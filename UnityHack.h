@@ -93,9 +93,9 @@ namespace unity {
         struct String : Object {
         private:
             int32_t m_stringLength{ 0 };
-            wchar_t m_firstChar[0];
+            wchar_t* m_firstChar;
         public:
-            auto ToString() -> std::string {
+            auto ToString() const -> std::string {
                 std::string        utf8Str;
                 for (const std::wstring utf16Str{ this->m_firstChar }; const auto& wchar : utf16Str) {
                     if (!this) return "";
@@ -106,6 +106,16 @@ namespace unity {
                 }
 
                 return utf8Str;
+            }
+
+            String(std::string str) {
+                this->m_stringLength = str.size();
+                this->m_firstChar = new wchar_t[str.size()];
+                MultiByteToWideChar(CP_UTF8, 0, &str[0], str.size(), this->m_firstChar, this->m_stringLength);
+            }
+
+            ~String() {
+                delete[] this->m_firstChar;
             }
         };
 
