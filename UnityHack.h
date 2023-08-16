@@ -5,6 +5,9 @@
 #include <fstream>
 #include <sstream>
 
+// 请使用OneApi Base包内Intel C++ 编译器打开MKL选项后编译
+#include <mkl.h>
+
 namespace unity {
     class CSharper {
     public:
@@ -12,43 +15,94 @@ namespace unity {
             float x;
             float y;
             float z;
+
+            inline auto distance(const Vector3& event) const -> float {
+                const float dx = this->x - event.x;
+                const float dy = this->y - event.y;
+                const float dz = this->z - event.z;
+                return std::sqrt(dx * dx + dy * dy + dz * dz);
+            }
+
+            inline auto distance(const std::vector<Vector3&> events) const -> std::vector<float> {
+                const int     numEvents     = events.size();
+                constexpr int numDimensions = 3;
+                const int     numElements   = numEvents * numDimensions;
+
+                // 将Vector3对象转换为一维数组
+                std::vector<float> coordinates(numElements);
+                for (int i = 0; i < numEvents; i++) {
+                    coordinates[i * numDimensions + 0] = events[i].x;
+                    coordinates[i * numDimensions + 1] = events[i].y;
+                    coordinates[i * numDimensions + 2] = events[i].z;
+                }
+
+                // 计算距离平方
+                std::vector<float> distances(numEvents);
+                cblas_sgemv(CblasRowMajor, CblasNoTrans, numEvents, numDimensions, -2.0f,
+                    coordinates.data(), numDimensions, &this->x, 1, 0.0f, distances.data(), 1);
+                for (auto& distance : distances) {
+                    distance = std::sqrt(distance);
+                }
+
+                return distances;
+            }
         };
 
         struct Vector2 {
             float x;
             float y;
+
+            inline auto distance(const Vector2& event) const -> float {
+                const float dx = this->x - event.x;
+                const float dy = this->y - event.y;
+                return std::sqrt(dx * dx + dy * dy);
+            }
+
+            inline auto distance(const std::vector<Vector2&> events) const -> std::vector<float> {
+                const int     numEvents     = events.size();
+                constexpr int numDimensions = 2;
+                const int     numElements   = numEvents * numDimensions;
+
+                // 将Vector2对象转换为一维数组
+                std::vector<float> coordinates(numElements);
+                for (int i = 0; i < numEvents; i++) {
+                    coordinates[i * numDimensions + 0] = events[i].x;
+                    coordinates[i * numDimensions + 1] = events[i].y;
+                }
+
+                // 计算距离平方
+                std::vector<float> distances(numEvents);
+                cblas_sgemv(CblasRowMajor, CblasNoTrans, numEvents, numDimensions, -2.0f,
+                    coordinates.data(), numDimensions, &this->x, 1, 0.0f, distances.data(), 1);
+                for (auto& distance : distances) {
+                    distance = std::sqrt(distance);
+                }
+
+                return distances;
+            }
         };
 
         struct Object {
-            
+            union {
+                struct Class* klass;
+                struct VTable* vtable;
+            };
+            struct MonitorData* monitor;
         };
 
-        struct String {
+        struct String : Object {
         private:
-            char    _space[0x10];
-            int     m_stringLength{ 0 };
-            wchar_t m_firstChar{ 0 };
+            int32_t m_stringLength{ 0 };
+            wchar_t m_firstChar[0];
         public:
             auto ToString() -> std::string {
                 std::string        utf8Str;
-                for (const std::wstring utf16Str{ &this->m_firstChar }; const auto& wchar : utf16Str) {
-                    if (wchar <= 0x7F)
-                        utf8Str += static_cast<char>(wchar);
-                    else if (wchar <= 0x7FF) {
-                        utf8Str += static_cast<char>(0xC0 | ((wchar >> 6) & 0x1F));
-                        utf8Str += static_cast<char>(0x80 | (wchar & 0x3F));
-                    }
-                    else if (wchar <= 0xFFFF) {
-                        utf8Str += static_cast<char>(0xE0 | ((wchar >> 12) & 0x0F));
-                        utf8Str += static_cast<char>(0x80 | ((wchar >> 6) & 0x3F));
-                        utf8Str += static_cast<char>(0x80 | (wchar & 0x3F));
-                    }
-                    else if (wchar <= 0x10FFFF) {
-                        utf8Str += static_cast<char>(0xF0 | ((wchar >> 18) & 0x07));
-                        utf8Str += static_cast<char>(0x80 | ((wchar >> 12) & 0x3F));
-                        utf8Str += static_cast<char>(0x80 | ((wchar >> 6) & 0x3F));
-                        utf8Str += static_cast<char>(0x80 | (wchar & 0x3F));
-                    }
+                for (const std::wstring utf16Str{ this->m_firstChar }; const auto& wchar : utf16Str) {
+                    if (!this) return "";
+
+                    std::string sRet(static_cast<size_t>(m_stringLength) * 3 + 1, '\0');
+                    WideCharToMultiByte(CP_UTF8, 0, m_firstChar, m_stringLength, &sRet[0], static_cast<int>(sRet.size()), 0, 0);
+                    return sRet;
                 }
 
                 return utf8Str;
