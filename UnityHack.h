@@ -509,7 +509,7 @@ namespace unity {
 
                     const auto klass = assembly->GetImage()->GetClassFromName(class_name);
 
-                    if (klass == nullptr && klass->GetName() != class_name && klass->GetNamespace() != namespaze)
+                    if (klass == nullptr || klass->GetName() != class_name || klass->GetNamespace() != namespaze)
                         continue;
 
                     return klass->GetMethodFromName(method_name)->GetAddress();
@@ -2134,7 +2134,7 @@ namespace unity {
 
                     const auto klass = assembly->GetImage()->GetClassFromName(class_name);
 
-                    if (klass == nullptr && klass->GetName() != class_name && klass->GetNamespace() != namespaze)
+                    if (klass == nullptr || klass->GetName() != class_name || klass->GetNamespace() != namespaze)
                         continue;
 
                     return klass->GetMethodFromName(method_name)->GetAddress();
