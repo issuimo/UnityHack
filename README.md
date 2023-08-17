@@ -18,13 +18,15 @@
 > ```
 
 > [!NOTE]\
-> il2cpp使用的是 崩坏：星穹铁道 (StarRail) GameAssembly.dll导出函数列表，不同版本的Unity不同游戏导出列表略有差异
+> il2cpp使用的是 崩坏：星穹铁道 (StarRail) GameAssembly.dll导出函数列表，不同版本的Unity不同游戏导出列表略有差异\
 > 部分特殊处理过的il2cpp无法使用 如: 原神 (Genshin Impact)
 
 > [!IMPORTANT]\
 > 使用示范
-> - Mono 
-> - - [ravenfield](https://github.com/issuimo/ravenfield)
+> ### Mono 
+> - [ravenfield](https://github.com/issuimo/ravenfield)
+> ### il2cpp
+> - None
 
 - 引入头文件
 ``` c++
