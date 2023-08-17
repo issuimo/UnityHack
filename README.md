@@ -1,6 +1,6 @@
 # 特点
 - 轻便小巧: 只需保护一个头文件即可使用
-- 无缝转接: 内置C#部分类的C++定义
+- 无缝衔接: 内置C#部分类的C++定义
 - 功能强大: 涵盖 类 类型 函数 域 程序集 变量 等操作
 
 # 如何使用
@@ -19,6 +19,7 @@
 
 > [!NOTE]\
 > il2cpp使用的是 崩坏：星穹铁道 (StarRail) GameAssembly.dll导出函数列表，不同版本的Unity不同游戏导出列表略有差异
+> 部分特殊处理过的il2cpp无法使用 如: 原神 (Genshin Impact)
 
 > [!IMPORTANT]\
 > 使用示范 [ravenfield](https://github.com/issuimo/ravenfield)
