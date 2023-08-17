@@ -93,40 +93,43 @@ namespace unity {
         struct String : Object {
         private:
             int32_t m_stringLength{ 0 };
-            wchar_t* m_firstChar;
+            wchar_t m_firstChar{0};
         public:
             auto ToString() const -> std::string {
                 std::string        utf8Str;
-                for (const std::wstring utf16Str{ this->m_firstChar }; const auto& wchar : utf16Str) {
-                    if (!this) return "";
-
+                for (const std::wstring utf16Str{ &this->m_firstChar }; const auto& wchar : utf16Str) {
                     std::string sRet(static_cast<size_t>(m_stringLength) * 3 + 1, '\0');
-                    WideCharToMultiByte(CP_UTF8, 0, m_firstChar, m_stringLength, &sRet[0], static_cast<int>(sRet.size()), 0, 0);
+                    WideCharToMultiByte(CP_UTF8, 0, &m_firstChar, m_stringLength, &sRet[0], static_cast<int>(sRet.size()), 0, 0);
                     return sRet;
                 }
 
                 return utf8Str;
             }
-
-            String(std::string str) {
-                this->m_stringLength = str.size();
-                this->m_firstChar = new wchar_t[str.size()];
-                MultiByteToWideChar(CP_UTF8, 0, &str[0], str.size(), this->m_firstChar, this->m_stringLength);
-            }
-
-            ~String() {
-                delete[] this->m_firstChar;
-            }
         };
 
         template<typename T>
-        struct Array {
+        struct Array : Object {
+        private:
+            struct {
+                size_t length;
+                size_t lower_bound;
+            }*         bounds{nullptr};
+            size_t max_length{0};
+            T* vector{nullptr};
+        public:
+            auto Size() const -> size_t {
+                return this->max_length;
+            }
 
-        };
+            auto Fill(T& v) -> void {
+                for (size_t i = 0; i < this->max_length; i++) {
+                    this->vector[i] = v;
+                }
+            }
 
-        template<typename T>
-        struct List {
-
+            T& operator[](size_t i) {
+                return this->vector[i];
+            }
         };
 
         static auto SetIL2cppMod() -> void {
