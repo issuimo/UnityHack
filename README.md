@@ -4,7 +4,7 @@
 - 功能强大: 涵盖 类 类型 函数 域 程序集 变量 等操作
 
 # 待完成的Unity类型
-- [ ] Camera
+- [X] Camera
 - [ ] Transform
 - [ ] GameObject
 - [ ] Component
