@@ -1,7 +1,23 @@
 # 特点
-- 轻便小巧: 只需保护一个头文件即可使用
+- 轻便小巧: 只需包含一个头文件即可使用
 - 无缝衔接: 内置C#部分类的C++定义
 - 功能强大: 涵盖 类 类型 函数 域 程序集 变量 等操作
+
+# 待完成的Unity类型
+- [ ] Camera
+- [ ] Transform
+- [ ] GameObject
+- [ ] Component
+- [ ] LayerMask
+- [ ] Rigidbody
+- [X] Vector4
+- [X] Quaternion
+- [X] Bounds
+- [X] Plane
+- [X] Ray
+- [X] Rect
+- [X] Color
+- [X] Matrix4x4
 
 # 如何使用
 > [!WARNING]\
