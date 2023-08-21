@@ -1633,7 +1633,7 @@ namespace unity {
             auto GetFile() const -> std::string { return this->name; }
 
             auto EnumClasses(std::vector<Class*>& classes) const -> size_t {
-                const auto count = this->typeCount;
+                const auto count = static_cast<size_t(*)(const Image * _this)>(address_["il2cpp_image_get_class_count"])(this);
                 classes.reserve(count);
                 for (size_t i = 0; i < count; i++) {
                     if (auto klass = static_cast<Class * (*)(const Image* _this, size_t index)>(address_[
@@ -1651,10 +1651,9 @@ namespace unity {
                 for (const auto& klass : classes) {
                     if (klass == nullptr) {
                         continue;}
-                    if (static_cast<const char*(CALLING_CONVENTION*)(void*)>(address_["il2cpp_class_get_name"])(klass) != name)
+                    if (klass->GetName() != name)
                         continue;
-                    std::cout << 2 << std::endl;
-                    if (static_cast<const char* (CALLING_CONVENTION*)(void*)>(address_["il2cpp_class_get_namespace"])(klass) != name_space)
+                    if (klass->GetNamespace() != name_space)
                         continue;
                     return klass;
                 }
@@ -1729,11 +1728,9 @@ namespace unity {
 
                     if (klass == nullptr)
                         continue;
-                    std::cout << 3 << std::endl;
-                    if (reinterpret_cast<const char* (*)(void*)>(address_["il2cpp_class_get_name"])(klass) != class_name)
+                    if (klass->GetName() != class_name)
                         continue;
-                    std::cout << 4 << std::endl;
-                    if (reinterpret_cast<const char* (*)(void*)>(address_["il2cpp_class_get_namespace"])(klass) != namespaze)
+                    if (klass->GetNamespace() != namespaze)
                         continue;
 
                     return klass;
