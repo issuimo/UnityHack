@@ -5,9 +5,9 @@
 
 # 待完成的Unity类型
 - [X] Camera
-- [ ] Transform
+- [X] Transform
 - [ ] GameObject
-- [ ] Component
+- [X] Component
 - [ ] LayerMask
 - [ ] Rigidbody
 - [X] Vector4
@@ -42,7 +42,7 @@
 > ### Mono 
 > - [ravenfield](https://github.com/issuimo/ravenfield)
 > ### il2cpp
-> - None
+> - [Phasmophobia](https://github.com/issuimo/PhasmophobiaCheat)
 
 - 引入头文件
 ``` c++
