@@ -10,6 +10,8 @@
 #include <fstream>
 #include <sstream>
 
+#include "Console.hpp"
+
 // 请使用OneApi Base包内Intel C++ 编译器打开MKL选项后编
 #include <mkl.h>
 
@@ -854,12 +856,24 @@ namespace unity {
                 const std::string& method_name,
                 const size_t       param_count = -1,
                 const std::string& namespaze = "") -> std::uintptr_t {
-                const auto klass = Class::GetClassFromName(class_name, namespaze);
+                Class* klass{};
+                try {
+                    klass = Class::GetClassFromName(class_name, namespaze);
+                    if (klass == nullptr) {
+                        LOG_WARNING("Cant Find \"{}\" Class", class_name);
+                        return 0;
+                    }
+                }
+                catch (...) {
+                    LOG_WARNING("Cant Find \"{}\" Class", method_name);
+                }
 
-                if (klass == nullptr)
-                    return 0;
-
-                return klass->GetMethodFromName(method_name, param_count)->GetAddress();
+                try {
+                    return klass->GetMethodFromName(method_name, param_count)->GetAddress();
+                }
+                catch (...) {
+                    LOG_WARNING("Cant Find \"{}\" Method", method_name);
+                }
             }
         };
 
@@ -1889,12 +1903,24 @@ namespace unity {
                 const std::string& method_name,
                 const size_t       param_count = -1,
                 const std::string& namespaze = "") -> std::uintptr_t {
-                const auto klass = Class::GetClassFromName(class_name, namespaze);
 
-                if (klass == nullptr)
-                    return 0;
+                Class* klass{};
+                try {
+                    klass = Class::GetClassFromName(class_name, namespaze);
+                    if (klass == nullptr) {
+                        LOG_WARNING("Cant Find \"{}\" Class", class_name);
+                        return 0;
+                    }
+                }
+                catch (...) {
+                    LOG_WARNING("Cant Find \"{}\" Class", method_name);
+                }
 
-                return klass->GetMethodFromName(method_name, param_count)->GetAddress();
+                try {
+                    return klass->GetMethodFromName(method_name, param_count)->GetAddress();
+                } catch (...) {
+                    LOG_WARNING("Cant Find \"{}\" Method", method_name);
+                }
             }
         };
 
