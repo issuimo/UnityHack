@@ -860,19 +860,19 @@ namespace unity {
                 try {
                     klass = Class::GetClassFromName(class_name, namespaze);
                     if (klass == nullptr) {
-                        LOG_WARNING("Cant Find \"{}\" Class", class_name);
+                        LOG_WARNING(std::format("Cant Find \"{}\" Class", class_name));
                         return 0;
                     }
                 }
                 catch (...) {
-                    LOG_WARNING("Cant Find \"{}\" Class", method_name);
+                    LOG_WARNING(std::format("Cant Find \"{}\" Class", class_name));
                 }
 
                 try {
                     return klass->GetMethodFromName(method_name, param_count)->GetAddress();
                 }
                 catch (...) {
-                    LOG_WARNING("Cant Find \"{}\" Method", method_name);
+                    LOG_WARNING(std::format("Cant Find \"{}\" Method", method_name));
                 }
             }
         };
@@ -1908,18 +1908,18 @@ namespace unity {
                 try {
                     klass = Class::GetClassFromName(class_name, namespaze);
                     if (klass == nullptr) {
-                        LOG_WARNING("Cant Find \"{}\" Class", class_name);
+                        LOG_WARNING(std::format("Cant Find \"{}\" Class", class_name));
                         return 0;
                     }
                 }
                 catch (...) {
-                    LOG_WARNING("Cant Find \"{}\" Class", method_name);
+                    LOG_WARNING(std::format("Cant Find \"{}\" Class", class_name));
                 }
 
                 try {
                     return klass->GetMethodFromName(method_name, param_count)->GetAddress();
                 } catch (...) {
-                    LOG_WARNING("Cant Find \"{}\" Method", method_name);
+                    LOG_WARNING(std::format("Cant Find \"{}\" Method", method_name));
                 }
             }
         };

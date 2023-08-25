@@ -5,10 +5,10 @@
 #include <iostream>
 #include <cstdio>
 #include "./fmt/printf.h"
-#define LOG_DEBUG(text, ...) Console::OutConsole(Console::debug,text,__FILE__,__LINE__, __VA_ARGS__)
-#define LOG_INFO(text, ...) Console::OutConsole(Console::info,text,__FILE__,__LINE__, __VA_ARGS__)
-#define LOG_WARNING(text, ...) Console::OutConsole(Console::warning,text,__FILE__,__LINE__, __VA_ARGS__)
-#define LOG_ERROR(text, ...) Console::OutConsole(Console::error,text,__FILE__,__LINE__, __VA_ARGS__)
+#define LOG_DEBUG(text) Console::OutConsole(Console::debug,text,__FILE__,__LINE__)
+#define LOG_INFO(text) Console::OutConsole(Console::info,text,__FILE__,__LINE__)
+#define LOG_WARNING(text) Console::OutConsole(Console::warning,text,__FILE__,__LINE__)
+#define LOG_ERROR(text) Console::OutConsole(Console::error,text,__FILE__,__LINE__)
 namespace Console {
 	enum OutType : short int {
 		info,
@@ -34,8 +34,8 @@ namespace Console {
 		canaryYellow,
 		BrightWhite
 	};
-	template<typename... Args>
-	void OutConsole(OutType type, const std::string& text, const std::string& file, int line, Args... args) {
+
+	void OutConsole(OutType type, const std::string& text, const std::string& file, int line) {
 		const HANDLE hWnd_ = GetStdHandle(STD_OUTPUT_HANDLE);
 		switch (type)
 		{
@@ -81,7 +81,7 @@ namespace Console {
 		SetConsoleTextAttribute(hWnd_, FOREGROUND_INTENSITY | purple);
 		fmt::printf("%s:%i", file.substr(file.find_last_of('\\') + 1).c_str(), line);
 		SetConsoleTextAttribute(hWnd_, FOREGROUND_INTENSITY | white);
-		fmt::printf("] :%s", fmt::format(text, args...));
+		fmt::printf("] :%s", text);
 	}
 	HWND StartConsole(const wchar_t* title, bool close) {
 		HWND hWnd_ = nullptr;
