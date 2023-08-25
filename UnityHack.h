@@ -528,7 +528,7 @@ namespace unity {
                 R"(*=====================================================================================================================================)" << "\n" << \
                 R"(*Unity Hack Library By 遂沫 2023/8/25 Mode: IL2CPP)" << "\n*/" << std::endl;
 
-            size_t image_s{}, image_i{};
+            size_t image_s{0}, image_i{0};
             std::list<Assembly*> assemblys;
             Assembly::EnumAssemblys(assemblys);
             image_s = assemblys.size();
