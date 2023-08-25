@@ -4,7 +4,6 @@
 #include <fstream>
 #include <iostream>
 #include <cstdio>
-#include "./fmt/printf.h"
 #define LOG_DEBUG(text) Console::OutConsole(Console::debug,text,__FILE__,__LINE__)
 #define LOG_INFO(text) Console::OutConsole(Console::info,text,__FILE__,__LINE__)
 #define LOG_WARNING(text) Console::OutConsole(Console::warning,text,__FILE__,__LINE__)
@@ -35,55 +34,55 @@ namespace Console {
 		BrightWhite
 	};
 
-	void OutConsole(OutType type, const std::string& text, const std::string& file, int line) {
+	static void OutConsole(OutType type, const std::string& text, const std::string& file, int line) {
 		const HANDLE hWnd_ = GetStdHandle(STD_OUTPUT_HANDLE);
 		switch (type)
 		{
 		case OutType::info:
 			SetConsoleTextAttribute(hWnd_, BACKGROUND_INTENSITY | green * 16);
-			fmt::printf(" ");
+			printf(" ");
 			SetConsoleTextAttribute(hWnd_, BACKGROUND_INTENSITY | black);
 			SetConsoleTextAttribute(hWnd_, FOREGROUND_INTENSITY | white);
-			fmt::printf("[");
+			printf("[");
 			SetConsoleTextAttribute(hWnd_, FOREGROUND_INTENSITY | green);
-			fmt::printf("Info ");
+			printf("Info ");
 			break;
 		case OutType::debug:
 			SetConsoleTextAttribute(hWnd_, BACKGROUND_INTENSITY | blue * 16);
-			fmt::printf(" ");
+			printf(" ");
 			SetConsoleTextAttribute(hWnd_, BACKGROUND_INTENSITY | black);
 			SetConsoleTextAttribute(hWnd_, FOREGROUND_INTENSITY | white);
-			fmt::printf("[");
+			printf("[");
 			SetConsoleTextAttribute(hWnd_, FOREGROUND_INTENSITY | blue);
-			fmt::printf("Debug");
+			printf("Debug");
 			break;
 		case OutType::warning:
 			SetConsoleTextAttribute(hWnd_, BACKGROUND_INTENSITY | yellow * 16);
-			fmt::printf(" ");
+			printf(" ");
 			SetConsoleTextAttribute(hWnd_, BACKGROUND_INTENSITY | black);
 			SetConsoleTextAttribute(hWnd_, FOREGROUND_INTENSITY | white);
-			fmt::printf("[");
+			printf("[");
 			SetConsoleTextAttribute(hWnd_, FOREGROUND_INTENSITY | yellow);
-			fmt::printf("Warn ");
+			printf("Warn ");
 			break;
 		case OutType::error:
 			SetConsoleTextAttribute(hWnd_, BACKGROUND_INTENSITY | red * 16);
-			fmt::printf(" ");
+			printf(" ");
 			SetConsoleTextAttribute(hWnd_, BACKGROUND_INTENSITY | black);
 			SetConsoleTextAttribute(hWnd_, FOREGROUND_INTENSITY | white);
-			fmt::printf("[");
+			printf("[");
 			SetConsoleTextAttribute(hWnd_, FOREGROUND_INTENSITY | red);
-			fmt::printf("Error");
+			printf("Error");
 			break;
 		}
 		SetConsoleTextAttribute(hWnd_, FOREGROUND_INTENSITY | white);
-		fmt::printf("]>[");
+		printf("]>[");
 		SetConsoleTextAttribute(hWnd_, FOREGROUND_INTENSITY | purple);
-		fmt::printf("%s:%i", file.substr(file.find_last_of('\\') + 1).c_str(), line);
+		printf("%s:%i", file.substr(file.find_last_of('\\') + 1).c_str(), line);
 		SetConsoleTextAttribute(hWnd_, FOREGROUND_INTENSITY | white);
-		fmt::printf("] :%s", text);
+		printf("] :%s", text.c_str());
 	}
-	HWND StartConsole(const wchar_t* title, bool close) {
+	static HWND StartConsole(const wchar_t* title, bool close) {
 		HWND hWnd_ = nullptr;
 		AllocConsole();
 		SetConsoleTitle(title);
@@ -112,7 +111,7 @@ namespace Console {
 			R"(===================================================================================================================)";
 		return hWnd_;
 	}
-	void EndConsole() {
+	static void EndConsole() {
 		fclose(stdout);
 		fclose(stderr);
 		fclose(stdin);

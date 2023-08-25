@@ -85,7 +85,7 @@ namespace unity {
             }
 
             auto Distance(const std::vector<Vector3>& events) const -> std::vector<float> {
-                const int     numEvents = events.size();
+                const size_t     numEvents = events.size();
                 constexpr int numDimensions = 3;
                 const int     numElements = numEvents * numDimensions;
 
@@ -135,7 +135,7 @@ namespace unity {
             }
 
             auto Distance(const std::vector<Vector2>& events) const -> std::vector<float> {
-                const int     numEvents = events.size();
+                const size_t     numEvents = events.size();
                 constexpr int numDimensions = 2;
                 const int     numElements = numEvents * numDimensions;
 
