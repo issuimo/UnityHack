@@ -866,6 +866,7 @@ namespace unity {
                 }
                 catch (...) {
                     LOG_WARNING(std::format("Cant Find \"{}\" Class", class_name));
+                    return 0;
                 }
 
                 try {
@@ -873,6 +874,7 @@ namespace unity {
                 }
                 catch (...) {
                     LOG_WARNING(std::format("Cant Find \"{}\" Method", method_name));
+                    return 0;
                 }
             }
         };
@@ -1914,12 +1916,14 @@ namespace unity {
                 }
                 catch (...) {
                     LOG_WARNING(std::format("Cant Find \"{}\" Class", class_name));
+                    return 0;
                 }
 
                 try {
                     return klass->GetMethodFromName(method_name, param_count)->GetAddress();
                 } catch (...) {
                     LOG_WARNING(std::format("Cant Find \"{}\" Method", method_name));
+                    return 0;
                 }
             }
         };

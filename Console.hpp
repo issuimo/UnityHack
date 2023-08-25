@@ -86,29 +86,29 @@ namespace Console {
 		HWND hWnd_ = nullptr;
 		AllocConsole();
 		SetConsoleTitle(title);
-		while (nullptr == hWnd_) hWnd_ = ::FindWindow(nullptr, title);
+		while (nullptr == hWnd_) hWnd_ = ::GetConsoleWindow();
 		const HMENU menu_ = ::GetSystemMenu(hWnd_, FALSE);
 		if (!close) { DeleteMenu(menu_, SC_CLOSE, MF_BYCOMMAND); }
 		SetWindowLong(hWnd_, GWL_STYLE, GetWindowLong(hWnd_, GWL_STYLE) & ~WS_MAXIMIZEBOX);
 		SetWindowLong(hWnd_, GWL_STYLE, GetWindowLong(hWnd_, GWL_STYLE) & ~WS_THICKFRAME);
 		SetWindowPos(hWnd_, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
-		freopen_s(reinterpret_cast<FILE**>(stdout), "CONOUT$", "w+", stdout);
-		freopen_s(reinterpret_cast<FILE**>(stderr), "CONOUT$", "w+", stderr);
-		freopen_s(reinterpret_cast<FILE**>(stdin), "CONIN$", "r+", stderr);
-		std::ofstream(stdout) <<
-			R"(      ___           ___                       ___           ___                    ___       ___           ___     )"
-			R"(     /\  \         /\__\          ___        /\__\         /\  \                  /\__\     /\  \         /\  \    )"
-			R"(    /::\  \       /:/  /         /\  \      /::|  |       /::\  \                /:/  /    /::\  \       /::\  \   )"
-			R"(   /:/\ \  \     /:/  /          \:\  \    /:|:|  |      /:/\:\  \              /:/  /    /:/\:\  \     /:/\:\  \  )"
-			R"(  _\:\~\ \  \   /:/  /  ___      /::\__\  /:/|:|__|__   /:/  \:\  \            /:/  /    /:/  \:\  \   /:/  \:\  \ )"
-			R"( /\ \:\ \ \__\ /:/__/  /\__\  __/:/\/__/ /:/ |::::\__\ /:/__/ \:\__\          /:/__/    /:/__/ \:\__\ /:/__/_\:\__\)"
-			R"( \:\ \:\ \/__/ \:\  \ /:/  / /\/:/  /    \/__/~~/:/  / \:\  \ /:/  /          \:\  \    \:\  \ /:/  / \:\  /\ \/__/)"
-			R"(  \:\ \:\__\    \:\  /:/  /  \::/__/           /:/  /   \:\  /:/  /            \:\  \    \:\  /:/  /   \:\ \:\__\  )"
-			R"(   \:\/:/  /     \:\/:/  /    \:\__\          /:/  /     \:\/:/  /              \:\  \    \:\/:/  /     \:\/:/  /  )"
-			R"(    \::/  /       \::/  /      \/__/         /:/  /       \::/  /                \:\__\    \::/  /       \::/  /   )"
-			R"(     \/__/         \/__/                     \/__/         \/__/                  \/__/     \/__/         \/__/    )"
-			R"(                                                                                                                   )"
-			R"(===================================================================================================================)";
+		freopen_s(reinterpret_cast<FILE**>(stdout), "CONOUT$", "w", stdout);
+		freopen_s(reinterpret_cast<FILE**>(stderr), "CONOUT$", "w", stderr);
+		freopen_s(reinterpret_cast<FILE**>(stdin), "CONIN$", "r", stdin);
+		std::ofstream(stdout) << \
+			R"(      ___           ___                       ___           ___                    ___       ___           ___     )" << "\n" << \
+			R"(     /\  \         /\__\          ___        /\__\         /\  \                  /\__\     /\  \         /\  \    )" << "\n" << \
+			R"(    /::\  \       /:/  /         /\  \      /::|  |       /::\  \                /:/  /    /::\  \       /::\  \   )" << "\n" << \
+			R"(   /:/\ \  \     /:/  /          \:\  \    /:|:|  |      /:/\:\  \              /:/  /    /:/\:\  \     /:/\:\  \  )" << "\n" << \
+			R"(  _\:\~\ \  \   /:/  /  ___      /::\__\  /:/|:|__|__   /:/  \:\  \            /:/  /    /:/  \:\  \   /:/  \:\  \ )" << "\n" << \
+			R"( /\ \:\ \ \__\ /:/__/  /\__\  __/:/\/__/ /:/ |::::\__\ /:/__/ \:\__\          /:/__/    /:/__/ \:\__\ /:/__/_\:\__\)" << "\n" << \
+			R"( \:\ \:\ \/__/ \:\  \ /:/  / /\/:/  /    \/__/~~/:/  / \:\  \ /:/  /          \:\  \    \:\  \ /:/  / \:\  /\ \/__/)" << "\n" << \
+			R"(  \:\ \:\__\    \:\  /:/  /  \::/__/           /:/  /   \:\  /:/  /            \:\  \    \:\  /:/  /   \:\ \:\__\  )" << "\n" << \
+			R"(   \:\/:/  /     \:\/:/  /    \:\__\          /:/  /     \:\/:/  /              \:\  \    \:\/:/  /     \:\/:/  /  )" << "\n" << \
+			R"(    \::/  /       \::/  /      \/__/         /:/  /       \::/  /                \:\__\    \::/  /       \::/  /   )" << "\n" << \
+			R"(     \/__/         \/__/                     \/__/         \/__/                  \/__/     \/__/         \/__/    )" << "\n" << \
+			R"(                                                                                                                   )" << "\n" << \
+			R"(===================================================================================================================)" << std::endl;
 		return hWnd_;
 	}
 	static void EndConsole() {
