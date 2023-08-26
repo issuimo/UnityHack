@@ -505,8 +505,8 @@ namespace unity {
                     continue;
                 }
 
-                for (auto& klass : classes_) {
-                    if (klass == 0)
+                for (const auto& klass : classes_) {
+                    if (klass == nullptr)
                         continue;
 
                     io << std::format("[{:04d}|{:04d}] {} \n", ++image_i, image_s, image_name);
@@ -520,28 +520,27 @@ namespace unity {
                     std::list<Method*> methods_;
                     klass->EnumMethods(methods_);
 
-					
-						io << std::format("    // 变量 -count:{}\n", fields_.size());
-						for (auto& field : fields_) {
-							if (!field)
-								continue;
-							try {
-								io << std::format("    [{:04d}|{:04d}] |Offset: {:+#06X}| {} {} {};\n", ++field_i, fields_.size(), field->GetOffset(), field->IsStatic() ? "static" : "      ", field->GetType()->GetName(), field->GetName());
-							} catch(...) {
-						
-							}
+					io << std::format("    // 变量 -count:{}\n", fields_.size());
+					for (const auto& field : fields_) {
+						if (!field)
+							continue;
+						try {
+                            io << std::format("    [{:04d}|{:04d}] |Offset: {:+#06X}| {} {} {};\n", ++field_i, fields_.size(), field->GetOffset(), field->IsStatic() ? "static" : "      ", field->GetType() ? field->GetType()->GetName() : "????", field->GetName());
+						} catch(...) {
+
 						}
+					}
 
                     io << std::format("\n    // 函数 -count:{}\n", methods_.size());
-                    for (auto& method : methods_) {
+                    for (const auto& method : methods_) {
                         if (!method)
                             continue;
-						
+
 						try {
 							io << std::format("    [Flags: {:032b}] [ParamCount: {:04d}]\n    [{:04d}|{:04d}] |RVA: {:+#010X}| {} {} {}(",
                             method->GetFlags(), method->GetParamCount(), ++method_i, methods_.size(), method->GetAddress() - reinterpret_cast<std::uintptr_t>(hModule_),
-                            method->IsStatic() ? "static" : "      ", method->GetRetType()->GetName(), method->GetName());
-							
+                            method->IsStatic() ? "static" : "      ", method->GetRetType() ? method->GetRetType()->GetName() : "????", method->GetName());
+
 							std::map<std::string, Type*> map_;
 							method->EnumParam(map_);
 							for (auto& [name, type] : map_) {
@@ -1710,8 +1709,8 @@ namespace unity {
                     continue;
                 }
 
-                for (auto& klass : classes_) {
-                    if (klass == 0)
+                for (const auto& klass : classes_) {
+                    if (klass == nullptr)
                         continue;
 
                     io << std::format("[{:04d}|{:04d}] {} \n", ++image_i, image_s, image_name);
@@ -1719,40 +1718,51 @@ namespace unity {
                     io << std::format("[{:04d}|{:04d}] class {} {}\n", ++class_i, class_s, klass->GetName(), klass->GetParent() ? ": " + klass->GetParent()->GetName() : "");
                     io << "{\n";
 
-                    int field_i{0}, method_i{0};
+                    int field_i{ 0 }, method_i{ 0 };
                     std::list<Field*> fields_;
                     klass->EnumFields(fields_);
                     std::list<Method*> methods_;
                     klass->EnumMethods(methods_);
 
                     io << std::format("    // 变量 -count:{}\n", fields_.size());
-                    for (auto& field : fields_) {
+                    for (const auto& field : fields_) {
                         if (!field)
                             continue;
-                        io << std::format("    [{:04d}|{:04d}] |Offset: {:+#06X}| {} {} {};\n", ++field_i, fields_.size(), field->GetOffset(), field->IsStatic() ? "static" : "      ", field->GetType()->GetName(), field->GetName());
+                        try {
+                            io << std::format("    [{:04d}|{:04d}] |Offset: {:+#06X}| {} {} {};\n", ++field_i, fields_.size(), field->GetOffset(), field->IsStatic() ? "static" : "      ", field->GetType() ? field->GetType()->GetName() : "????", field->GetName());
+                        }
+                        catch (...) {
+
+                        }
                     }
 
                     io << std::format("\n    // 函数 -count:{}\n", methods_.size());
-                    for (auto& method : methods_) {
+                    for (const auto& method : methods_) {
                         if (!method)
                             continue;
-                        io << std::format("    [Flags: {:032b}] [ParamCount: {:04d}]\n    [{:04d}|{:04d}] |RVA: {:+#010X}| {} {} {}(",
-                            method->GetFlags(), method->GetParamCount(), ++method_i, methods_.size(), method->GetAddress() - reinterpret_cast<std::uintptr_t>(hModule_),
-                            method->IsStatic() ? "static" : "      ", method->GetRetType()->GetName(), method->GetName());
 
-                        std::map<std::string, Type*> map_;
-                        method->EnumParam(map_);
-                        for (auto& [name, type] : map_) {
-                            if (!type)
-                                continue;
-                            io << std::format("{} {}, ", type->GetName(), name);
+                        try {
+                            io << std::format("    [Flags: {:032b}] [ParamCount: {:04d}]\n    [{:04d}|{:04d}] |RVA: {:+#010X}| {} {} {}(",
+                                method->GetFlags(), method->GetParamCount(), ++method_i, methods_.size(), method->GetAddress() - reinterpret_cast<std::uintptr_t>(hModule_),
+                                method->IsStatic() ? "static" : "      ", method->GetRetType() ? method->GetRetType()->GetName() : "????", method->GetName());
+
+                            std::map<std::string, Type*> map_;
+                            method->EnumParam(map_);
+                            for (auto& [name, type] : map_) {
+                                if (!type)
+                                    continue;
+                                io << std::format("{} {}, ", type->GetName(), name);
+                            }
+
+                            if (map_.size() > 0) {
+                                io.seekp(-1, std::ios_base::end);
+                                io << "";
+                                io.seekp(-1, std::ios_base::end);
+                                io << "";
+                            }
                         }
-
-                        if (map_.size() > 0) {
-                            io.seekp(-1, std::ios_base::end);
-                            io << "";
-                            io.seekp(-1, std::ios_base::end);
-                            io << "";
+                        catch (...) {
+                            continue;
                         }
 
                         io << ");\n\n";
