@@ -13,9 +13,6 @@
 #include <map>
 #include "Console.hpp"
 
-// 请使用OneApi Base包内Intel C++ 编译器打开MKL选项后编
-#include <mkl.h>
-
 #ifdef _WIN64
 #define CALLING_CONVENTION __fastcall
 #elif _WIN32
@@ -84,39 +81,6 @@ namespace unity {
                 const float dz = this->z - event.z;
                 return std::sqrt(dx * dx + dy * dy + dz * dz);
             }
-
-            auto Distance(const std::vector<Vector3>& events) const -> std::vector<float> {
-                const size_t     numEvents = events.size();
-                constexpr int numDimensions = 3;
-                const int     numElements = numEvents * numDimensions;
-
-                // 将Vector3对象转换为一维数组
-                std::vector<float> coordinates(numElements);
-                for (int i = 0; i < numEvents; i++) {
-                    coordinates[i * numDimensions + 0] = events[i].x;
-                    coordinates[i * numDimensions + 1] = events[i].y;
-                    coordinates[i * numDimensions + 2] = events[i].z;
-                }
-
-                // 计算距离平方
-                std::vector<float> distances(numEvents);
-                cblas_sgemv(CblasRowMajor,
-                    CblasNoTrans,
-                    numEvents,
-                    numDimensions,
-                    -2.0f,
-                    coordinates.data(),
-                    numDimensions,
-                    &this->x,
-                    1,
-                    0.0f,
-                    distances.data(),
-                    1);
-                for (auto& distance : distances)
-                    distance = std::sqrt(distance);
-
-                return distances;
-            }
         };
 
         struct Vector2 {
@@ -133,38 +97,6 @@ namespace unity {
                 const float dx = this->x - event.x;
                 const float dy = this->y - event.y;
                 return std::sqrt(dx * dx + dy * dy);
-            }
-
-            auto Distance(const std::vector<Vector2>& events) const -> std::vector<float> {
-                const size_t     numEvents = events.size();
-                constexpr int numDimensions = 2;
-                const int     numElements = numEvents * numDimensions;
-
-                // 将Vector2对象转换为一维数组
-                std::vector<float> coordinates(numElements);
-                for (int i = 0; i < numEvents; i++) {
-                    coordinates[i * numDimensions + 0] = events[i].x;
-                    coordinates[i * numDimensions + 1] = events[i].y;
-                }
-
-                // 计算距离平方
-                std::vector<float> distances(numEvents);
-                cblas_sgemv(CblasRowMajor,
-                    CblasNoTrans,
-                    numEvents,
-                    numDimensions,
-                    -2.0f,
-                    coordinates.data(),
-                    numDimensions,
-                    &this->x,
-                    1,
-                    0.0f,
-                    distances.data(),
-                    1);
-                for (auto& distance : distances)
-                    distance = std::sqrt(distance);
-
-                return distances;
             }
         };
 
@@ -588,35 +520,45 @@ namespace unity {
                     std::list<Method*> methods_;
                     klass->EnumMethods(methods_);
 
-                    io << std::format("    // 变量 -count:{}\n", fields_.size());
-                    for (auto& field : fields_) {
-                        if (!field)
-                            continue;
-                        io << std::format("    [{:04d}|{:04d}] |Offset: {:+#06X}| {} {} {};\n", ++field_i, fields_.size(), field->GetOffset(), field->IsStatic() ? "static" : "      ", field->GetType()->GetName(), field->GetName());
-                    }
+					
+						io << std::format("    // 变量 -count:{}\n", fields_.size());
+						for (auto& field : fields_) {
+							if (!field)
+								continue;
+							try {
+								io << std::format("    [{:04d}|{:04d}] |Offset: {:+#06X}| {} {} {};\n", ++field_i, fields_.size(), field->GetOffset(), field->IsStatic() ? "static" : "      ", field->GetType()->GetName(), field->GetName());
+							} catch(...) {
+						
+							}
+						}
 
                     io << std::format("\n    // 函数 -count:{}\n", methods_.size());
                     for (auto& method : methods_) {
                         if (!method)
                             continue;
-                        io << std::format("    [Flags: {:032b}] [ParamCount: {:04d}]\n    [{:04d}|{:04d}] |RVA: {:+#010X}| {} {} {}(",
+						
+						try {
+							io << std::format("    [Flags: {:032b}] [ParamCount: {:04d}]\n    [{:04d}|{:04d}] |RVA: {:+#010X}| {} {} {}(",
                             method->GetFlags(), method->GetParamCount(), ++method_i, methods_.size(), method->GetAddress() - reinterpret_cast<std::uintptr_t>(hModule_),
                             method->IsStatic() ? "static" : "      ", method->GetRetType()->GetName(), method->GetName());
+							
+							std::map<std::string, Type*> map_;
+							method->EnumParam(map_);
+							for (auto& [name, type] : map_) {
+								if (!type)
+									continue;
+								io << std::format("{} {}, ", type->GetName(), name);
+							}
 
-                        std::map<std::string, Type*> map_;
-                        method->EnumParam(map_);
-                        for (auto& [name, type] : map_) {
-                            if (!type)
-                                continue;
-                            io << std::format("{} {}, ", type->GetName(), name);
-                        }
-
-                        if (map_.size() > 0) {
-                            io.seekp(-1, std::ios_base::end);
-                            io << "";
-                            io.seekp(-1, std::ios_base::end);
-                            io << "";
-                        }
+							if (map_.size() > 0) {
+								io.seekp(-1, std::ios_base::end);
+								io << "";
+								io.seekp(-1, std::ios_base::end);
+								io << "";
+							}
+						} catch(..) {
+							continue;
+						}
 
                         io << ");\n\n";
                     }
