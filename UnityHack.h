@@ -556,7 +556,7 @@ namespace unity {
 								io.seekp(-1, std::ios_base::end);
 								io << "";
 							}
-						} catch(..) {
+						} catch(...) {
 							continue;
 						}
 
