@@ -308,13 +308,11 @@ namespace unity {
                 };
 
                 auto WorldToScreenPoint(const Vector3& position, CameraEye eye) -> Vector3 {
-                    return reinterpret_cast<Vector3(*)(Camera*, Vector3, CameraEye)>(methodAddress_[
-                        "Camera.WorldToScreenPoint"])(this, position, eye);
+                    return reinterpret_cast<Vector3(*)(Camera*, Vector3, CameraEye)>(methodAddress_["Camera.WorldToScreenPoint"])(this, position, eye);
                 }
 
                 auto ScreenToWorldPoint(const Vector3& position) -> Vector3 {
-                    return reinterpret_cast<Vector3(*)(Camera*, Vector3)>(methodAddress_[
-                        "Camera.ScreenToWorldPoint"])(this, position);
+                    return reinterpret_cast<Vector3(*)(Camera*, Vector3)>(methodAddress_["Camera.ScreenToWorldPoint"])(this, position);
                 }
 
                 auto GetDepth() -> float {
