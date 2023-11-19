@@ -1,10 +1,6 @@
-> 2023/11/12
-> 已停止更新, 请期待后续的 UnityResolve 库
-
-# 特点
-- 轻便小巧: 只需包含一个头文件即可使用
-- 无缝衔接: 内置C#部分类的C++定义
-- 功能强大: 涵盖 类 类型 函数 域 程序集 变量 等操作
+> 2023/11/12 \
+> 因难以维护问题已停止更新, 目前已转为UnityResolve.hpp开发 \
+> [UnityResolve.hpp](https://github.com/issuimo/UnityResolve.hpp)
 
 # 待完成的Unity类型
 - [X] Camera
